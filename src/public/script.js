@@ -3,11 +3,25 @@
 document.getElementById('registerForm').addEventListener('submit', async(e) => {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const response = await fetch('/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-    });
-    const result = await response.text();
-    document.getElementById('message').textContent = result;
-})
+    const messageElement = document.getElementById('message');
+
+    try {
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Registration failed: ${response.statusText}`);
+        }
+
+        const result = await response.text();
+        messageElement.textContent = result;
+        messageElement.style.color = 'green';
+    } catch (error) {
+        messageElement.textContent = error.message;
+        messageElement.style.color = 'red';
+    }
+});
+
